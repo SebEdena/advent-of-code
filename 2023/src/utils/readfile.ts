@@ -6,7 +6,7 @@ export async function readInput(filename: string) {
     return text
       .split(detectNewlineGraceful(text))
       .filter((row) => row.length > 0)
-      .map((row) => row.split(' '));
+      .map((row) => row.split(/[ ]+/));
   } else {
     return [];
   }
