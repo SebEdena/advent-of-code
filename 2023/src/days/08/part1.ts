@@ -1,4 +1,4 @@
-import { readInput } from '../../utils/readfile';
+import { readInput } from '@src/utils/readfile';
 
 const data = await readInput(import.meta.resolveSync('./input.txt'));
 
