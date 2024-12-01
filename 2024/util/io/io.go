@@ -7,17 +7,19 @@ import (
 	"strings"
 )
 
-func ReadInputFile(path string) [][]string {
+func ReadInputFile(path string) *[][]string {
 	content, err := os.ReadFile(path)
 
 	if err != nil {
 		panic(err)
 	}
 
-	return ParseInputFromBytes(&content)
+	input := ParseInputFromBytes(&content)
+
+	return input
 }
 
-func ParseInputFromBytes(input *[]byte) [][]string {
+func ParseInputFromBytes(input *[]byte) *[][]string {
 	str := regexp.MustCompile(`[ ]+`).ReplaceAllString(strings.TrimSpace(string(*input)), " ")
 
 	data := make([][]string, 0)
@@ -28,7 +30,7 @@ func ParseInputFromBytes(input *[]byte) [][]string {
 		data = append(data, words)
 	}
 
-	return data
+	return &data
 }
 
 func ConvertToNumber(input *[][]string) [][]int {
@@ -45,11 +47,4 @@ func ConvertToNumber(input *[][]string) [][]int {
 		result[i] = numRow
 	}
 	return result
-}
-
-func CreateDayFile(day int) {
-	os.MkdirAll("days/day"+strconv.Itoa(day), os.ModePerm)
-	os.Create("days/day" + strconv.Itoa(day) + "/part1.go")
-	os.Create("days/day" + strconv.Itoa(day) + "/part2.go")
-	os.Create("days/day" + strconv.Itoa(day) + "/input.txt")
 }
