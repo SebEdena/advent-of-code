@@ -6,3 +6,7 @@ func Abs(x int) int {
 	}
 	return x
 }
+
+func SameSign(a, b int) bool {
+	return (a < 0) == (b < 0)
+}
