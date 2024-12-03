@@ -13,7 +13,7 @@ func main() {
 	input := io.ReadInputFile("./input.txt")
 
 	var part int
-	flag.IntVar(&part, "part", 2, "part 1 or 2")
+	flag.IntVar(&part, "part", 1, "part 1 or 2")
 	flag.Parse()
 	fmt.Println("Running part", part)
 
@@ -30,11 +30,11 @@ func main() {
 	os.Exit(0)
 }
 
-func part1(input *[][]string) int {
-	reports := io.ConvertToNumber(input)
+func part1(input *string) int {
+	data := io.ToIntSlice(input)
 	safeReports := 0
 
-	for i, report := range reports {
+	for i, report := range *data {
 		if isSafeReport(&report) {
 			println(i+1, true)
 			safeReports++
@@ -46,11 +46,11 @@ func part1(input *[][]string) int {
 	return safeReports
 }
 
-func part2(input *[][]string) int {
-	reports := io.ConvertToNumber(input)
+func part2(input *string) int {
+	data := io.ToIntSlice(input)
 	safeReports := 0
 
-	for _, report := range reports {
+	for _, report := range *data {
 		safe := isSafeReport(&report)
 		i := 0
 		for !safe && i < len(report) {
