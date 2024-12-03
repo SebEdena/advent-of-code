@@ -7,19 +7,19 @@ import (
 	"strings"
 )
 
-func ReadInputFile(path string) *[][]string {
+func ReadInputFile(path string) *string {
 	content, err := os.ReadFile(path)
 
 	if err != nil {
 		panic(err)
 	}
 
-	input := ParseInputFromBytes(&content)
+	input := string(content)
 
-	return input
+	return &input
 }
 
-func ParseInputFromBytes(input *[]byte) *[][]string {
+func ToStringSlice(input *string) *[][]string {
 	str := regexp.MustCompile(`[ ]+`).ReplaceAllString(strings.TrimSpace(string(*input)), " ")
 
 	data := make([][]string, 0)
@@ -33,18 +33,25 @@ func ParseInputFromBytes(input *[]byte) *[][]string {
 	return &data
 }
 
-func ConvertToNumber(input *[][]string) [][]int {
-	result := make([][]int, len(*input))
-	for i, row := range *input {
-		numRow := make([]int, len(row))
-		for j, numStr := range row {
-			numInt, err := strconv.Atoi(numStr)
+func ToIntSlice(input *string) *[][]int {
+
+	str := regexp.MustCompile(`[ ]+`).ReplaceAllString(strings.TrimSpace(string(*input)), " ")
+
+	rows := strings.Split(str, "\n")
+
+	data := make([][]int, len(rows))
+
+	for i, row := range rows {
+		words := strings.Split(strings.TrimSpace(row), " ")
+
+		for j, word := range words {
+			num, err := strconv.Atoi(word)
 			if err != nil {
 				panic(err)
 			}
-			numRow[j] = numInt
+			data[i][j] = num
 		}
-		result[i] = numRow
 	}
-	return result
+
+	return &data
 }

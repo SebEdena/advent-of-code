@@ -30,18 +30,18 @@ func main() {
 	os.Exit(0)
 }
 
-func part1(input *[][]string) int {
-	numbers := io.ConvertToNumber(input)
+func part1(input *string) int {
+	data := io.ToIntSlice(input)
 
-	list1, list2 := extractLists(&numbers)
+	list1, list2 := extractLists(data)
 
 	return oneToOneDifference(&list1, &list2)
 }
 
-func part2(input *[][]string) int {
-	numbers := io.ConvertToNumber(input)
+func part2(input *string) int {
+	data := io.ToIntSlice(input)
 
-	return similarityScore(&numbers)
+	return similarityScore(data)
 }
 
 func extractLists(list *[][]int) ([]int, []int) {
