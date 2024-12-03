@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
-	"strings"
 )
 
 func main() {
@@ -67,39 +66,29 @@ func extractMuls(input *string) [][2]int {
 }
 
 func extractMulsExtended(input *string) [][2]int {
-	instructRegex := regexp.MustCompile(`mul|don't|do`)
+	instructRegex := regexp.MustCompile(`mul\(\d{1,3},\d{1,3}\)|do\(\)|don\'t\(\)`)
 	mulRegex := regexp.MustCompile(`mul\((\d{1,3}),(\d{1,3})\)`)
 
 	muls := make([][2]int, 0)
 
 	enabled := true
 
-	remainingStr := strings.Clone(*input)
+	matches := instructRegex.FindAllString(*input, -1)
 
-	index := instructRegex.FindStringSubmatchIndex(remainingStr)
-	for index != nil {
-		switch remainingStr[index[0]:index[1]] {
-		case "mul":
-			{
-				remainingStr = remainingStr[index[0]:]
-				mulIndex := mulRegex.FindStringSubmatchIndex(remainingStr)
-				if mulIndex != nil && mulIndex[0] == 0 {
-					if enabled {
-						mul := mulRegex.FindStringSubmatch(remainingStr)
-						operandA, _ := strconv.Atoi(mul[1])
-						operandB, _ := strconv.Atoi(mul[2])
-						muls = append(muls, [2]int{operandA, operandB})
-					}
-					index = mulIndex
-				}
-			}
-		case "do":
+	for _, match := range matches {
+		switch match {
+		case "do()":
 			enabled = true
-		case "don't":
+		case "don't()":
 			enabled = false
+		default:
+			if enabled {
+				mul := mulRegex.FindStringSubmatch(match)
+				operandA, _ := strconv.Atoi(mul[1])
+				operandB, _ := strconv.Atoi(mul[2])
+				muls = append(muls, [2]int{operandA, operandB})
+			}
 		}
-		remainingStr = remainingStr[index[1]:]
-		index = instructRegex.FindStringSubmatchIndex(remainingStr)
 	}
 
 	return muls
