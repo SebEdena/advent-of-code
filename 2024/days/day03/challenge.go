@@ -12,7 +12,7 @@ func main() {
 	input := io.ReadInputFile("./input.txt")
 
 	var part int
-	flag.IntVar(&part, "part", 2, "part 1 or 2")
+	flag.IntVar(&part, "part", 1, "part 1 or 2")
 	flag.Parse()
 	fmt.Println("Running part", part)
 

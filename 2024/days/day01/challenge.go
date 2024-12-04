@@ -31,7 +31,7 @@ func main() {
 }
 
 func part1(input *string) int {
-	data := io.ToIntSlice(input)
+	data := io.ToIntSlice(input, " ")
 
 	list1, list2 := extractLists(data)
 
@@ -39,7 +39,7 @@ func part1(input *string) int {
 }
 
 func part2(input *string) int {
-	data := io.ToIntSlice(input)
+	data := io.ToIntSlice(input, " ")
 
 	return similarityScore(data)
 }

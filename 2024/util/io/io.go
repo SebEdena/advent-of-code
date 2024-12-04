@@ -19,13 +19,13 @@ func ReadInputFile(path string) *string {
 	return &input
 }
 
-func ToStringSlice(input *string) *[][]string {
+func ToStringSlice(input *string, columnSplitter string) *[][]string {
 	str := regexp.MustCompile(`[ ]+`).ReplaceAllString(strings.TrimSpace(string(*input)), " ")
 
 	data := make([][]string, 0)
 
 	for _, row := range strings.Split(str, "\n") {
-		words := strings.Split(strings.TrimSpace(row), " ")
+		words := strings.Split(strings.TrimSpace(row), columnSplitter)
 
 		data = append(data, words)
 	}
@@ -33,7 +33,7 @@ func ToStringSlice(input *string) *[][]string {
 	return &data
 }
 
-func ToIntSlice(input *string) *[][]int {
+func ToIntSlice(input *string, columnSplitter string) *[][]int {
 
 	str := regexp.MustCompile(`[ ]+`).ReplaceAllString(strings.TrimSpace(string(*input)), " ")
 
@@ -42,7 +42,7 @@ func ToIntSlice(input *string) *[][]int {
 	data := make([][]int, len(rows))
 
 	for i, row := range rows {
-		words := strings.Split(strings.TrimSpace(row), " ")
+		words := strings.Split(strings.TrimSpace(row), columnSplitter)
 
 		for j, word := range words {
 			num, err := strconv.Atoi(word)
