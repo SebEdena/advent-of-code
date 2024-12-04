@@ -3,7 +3,6 @@ package cmd
 import (
 	"aoc-2024/cmd/generator"
 	"aoc-2024/util/aoc"
-	"bytes"
 	"fmt"
 	"os"
 	"os/exec"
@@ -81,18 +80,15 @@ func runCommand() *cobra.Command {
 			call := exec.Command(
 				"go", "run", ".", "-part", fmt.Sprintf("%d", part),
 			)
-			var out bytes.Buffer
-			call.Stdout = &out
 			call.Dir = fmt.Sprintf("./days/day%02d", day)
+			call.Stdout = os.Stdout
+			call.Stderr = os.Stderr
 
 			err := call.Run()
 
 			if err != nil {
-				fmt.Println(err)
-				os.Exit(1)
+				panic(err)
 			}
-
-			fmt.Println(out.String())
 		},
 	}
 }
