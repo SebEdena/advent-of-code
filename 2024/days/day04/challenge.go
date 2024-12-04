@@ -38,9 +38,17 @@ func part1(input *string) int {
 }
 
 func part2(input *string) int {
-	// data := io.ToStringSlice(input, "")
+	data := io.ToStringSlice(input, "")
 
-	return 0
+	countWords := 0
+
+	for i := 1; i < len(*data)-1; i++ {
+		for j := 1; j < len((*data)[i])-1; j++ {
+			countWords += findCrosswords(data, [2]int{i, j}, "MAS")
+		}
+	}
+
+	return countWords
 }
 
 type Direction int
@@ -67,26 +75,79 @@ var directions = map[Direction][2]int{
 	East:      {0, 1},
 }
 
+func applyDirection(coords [2]int, direction Direction) [2]int {
+	return [2]int{coords[0] + directions[direction][0], coords[1] + directions[direction][1]}
+}
+
+func getCharacter(grid *[][]string, coords [2]int) string {
+	if coords[0] < 0 || coords[0] >= len(*grid) || coords[1] < 0 || coords[1] >= len((*grid)[0]) {
+		return ""
+	}
+	return (*grid)[coords[0]][coords[1]]
+}
+
 func findWords(grid *[][]string, coords [2]int, word string) int {
 	countWords := 0
 
 dirLoop:
-	for _, direction := range directions {
+	for direction := range directions {
 		index := 0
 		currentCoords := coords
 
 		for index < len(word) {
-			if (currentCoords[0] < 0 || currentCoords[0] >= len(*grid) ||
-				currentCoords[1] < 0 || currentCoords[1] >= len((*grid)[0])) ||
-				(string(word[index]) != (*grid)[currentCoords[0]][currentCoords[1]]) {
+			if string(word[index]) != getCharacter(grid, currentCoords) {
 				continue dirLoop
 			} else {
 				index++
-				currentCoords = [2]int{currentCoords[0] + direction[0], currentCoords[1] + direction[1]}
+				currentCoords = applyDirection(currentCoords, direction)
 			}
 		}
 		countWords++
 	}
 
 	return countWords
+}
+
+func findCrosswords(grid *[][]string, coords [2]int, word string) int {
+
+	if len(word) != 3 {
+		return 0
+	}
+
+	if getCharacter(grid, coords) != string(word[1]) {
+		return 0
+	}
+
+	nwCharacter := getCharacter(grid, applyDirection(coords, NorthWest))
+	neCharacter := getCharacter(grid, applyDirection(coords, NorthEast))
+	swCharacter := getCharacter(grid, applyDirection(coords, SouthWest))
+	seCharacter := getCharacter(grid, applyDirection(coords, SouthEast))
+
+	var currentCharacter string
+	var oppositeCharacter string
+	switch nwCharacter {
+	case string(word[0]):
+		{
+			currentCharacter = string(word[0])
+			oppositeCharacter = string(word[2])
+		}
+	case string(word[2]):
+		{
+			currentCharacter = string(word[2])
+			oppositeCharacter = string(word[0])
+		}
+	default:
+		{
+			return 0
+		}
+
+	}
+
+	if seCharacter == oppositeCharacter &&
+		((neCharacter == currentCharacter && swCharacter == oppositeCharacter) ||
+			(neCharacter == oppositeCharacter && swCharacter == currentCharacter)) {
+		return 1
+	} else {
+		return 0
+	}
 }
