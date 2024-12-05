@@ -43,14 +43,17 @@ func ToIntSlice(input *string, columnSplitter string) *[][]int {
 
 	for i, row := range rows {
 		words := strings.Split(strings.TrimSpace(row), columnSplitter)
+		numbers := make([]int, len(words))
 
 		for j, word := range words {
 			num, err := strconv.Atoi(word)
 			if err != nil {
 				panic(err)
 			}
-			data[i][j] = num
+			numbers[j] = num
 		}
+
+		data[i] = numbers
 	}
 
 	return &data
