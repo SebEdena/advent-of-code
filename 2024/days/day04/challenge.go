@@ -1,6 +1,7 @@
 package main
 
 import (
+	"aoc-2024/util/grids"
 	"aoc-2024/util/io"
 	"flag"
 	"fmt"
@@ -27,79 +28,44 @@ func main() {
 }
 
 func part1(input *string) int {
-	data := io.ToStringSlice(input, "")
+	var data grids.Grid = *io.ToStringSlice(input, "")
 	countWords := 0
-	for i := range *data {
-		for j := range (*data)[i] {
-			countWords += findWords(data, [2]int{i, j}, "XMAS")
+	for i := range data {
+		for j := range data[i] {
+			countWords += findWords(&data, grids.Coords{X: i, Y: j}, "XMAS")
 		}
 	}
 	return countWords
 }
 
 func part2(input *string) int {
-	data := io.ToStringSlice(input, "")
+	var data grids.Grid = *io.ToStringSlice(input, "")
 
 	countWords := 0
 
-	for i := 1; i < len(*data)-1; i++ {
-		for j := 1; j < len((*data)[i])-1; j++ {
-			countWords += findCrosswords(data, [2]int{i, j}, "MAS")
+	for i := 1; i < len(data)-1; i++ {
+		for j := 1; j < len(data[i])-1; j++ {
+			countWords += findCrosswords(&data, grids.Coords{X: i, Y: j}, "MAS")
 		}
 	}
 
 	return countWords
 }
 
-type Direction int
-
-const (
-	NorthEast Direction = iota
-	North
-	NorthWest
-	West
-	SouthWest
-	South
-	SouthEast
-	East
-)
-
-var directions = map[Direction][2]int{
-	NorthEast: {-1, 1},
-	North:     {-1, 0},
-	NorthWest: {-1, -1},
-	West:      {0, -1},
-	SouthWest: {1, -1},
-	South:     {1, 0},
-	SouthEast: {1, 1},
-	East:      {0, 1},
-}
-
-func applyDirection(coords [2]int, direction Direction) [2]int {
-	return [2]int{coords[0] + directions[direction][0], coords[1] + directions[direction][1]}
-}
-
-func getCharacter(grid *[][]string, coords [2]int) string {
-	if coords[0] < 0 || coords[0] >= len(*grid) || coords[1] < 0 || coords[1] >= len((*grid)[0]) {
-		return ""
-	}
-	return (*grid)[coords[0]][coords[1]]
-}
-
-func findWords(grid *[][]string, coords [2]int, word string) int {
+func findWords(grid *grids.Grid, coords grids.Coords, word string) int {
 	countWords := 0
 
 dirLoop:
-	for direction := range directions {
+	for direction := range grids.Directions {
 		index := 0
 		currentCoords := coords
 
 		for index < len(word) {
-			if string(word[index]) != getCharacter(grid, currentCoords) {
+			if string(word[index]) != grids.GetCharacter(grid, currentCoords) {
 				continue dirLoop
 			} else {
 				index++
-				currentCoords = applyDirection(currentCoords, direction)
+				currentCoords = grids.ApplyDirection(currentCoords, direction)
 			}
 		}
 		countWords++
@@ -108,20 +74,20 @@ dirLoop:
 	return countWords
 }
 
-func findCrosswords(grid *[][]string, coords [2]int, word string) int {
+func findCrosswords(grid *grids.Grid, coords grids.Coords, word string) int {
 
 	if len(word) != 3 {
 		return 0
 	}
 
-	if getCharacter(grid, coords) != string(word[1]) {
+	if grids.GetCharacter(grid, coords) != string(word[1]) {
 		return 0
 	}
 
-	nwCharacter := getCharacter(grid, applyDirection(coords, NorthWest))
-	neCharacter := getCharacter(grid, applyDirection(coords, NorthEast))
-	swCharacter := getCharacter(grid, applyDirection(coords, SouthWest))
-	seCharacter := getCharacter(grid, applyDirection(coords, SouthEast))
+	nwCharacter := grids.GetCharacter(grid, grids.ApplyDirection(coords, grids.NorthWest))
+	neCharacter := grids.GetCharacter(grid, grids.ApplyDirection(coords, grids.NorthEast))
+	swCharacter := grids.GetCharacter(grid, grids.ApplyDirection(coords, grids.SouthWest))
+	seCharacter := grids.GetCharacter(grid, grids.ApplyDirection(coords, grids.SouthEast))
 
 	var currentCharacter string
 	var oppositeCharacter string
