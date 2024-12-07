@@ -2,7 +2,6 @@ package aoc
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -12,9 +11,13 @@ import (
 	"strings"
 )
 
-func SaveInput(day int) error {
+var ErrFutureDay = fmt.Errorf("future_day")
+var ErrRetry = fmt.Errorf("retry_later")
+var ErrUnexpected = fmt.Errorf("unexpected_error")
 
-	url := fmt.Sprintf("https://adventofcode.com/2024/day/%d/input", day)
+func SaveInput(year, day int) error {
+
+	url := fmt.Sprintf("https://adventofcode.com/%d/day/%d/input", year, day)
 
 	req, err := aocRequest("GET", url, nil)
 
@@ -28,14 +31,23 @@ func SaveInput(day int) error {
 		return err
 	}
 
-	os.WriteFile(fmt.Sprintf("./days/day%02d/input.txt", day), *inputBytes, 0777)
+	if strings.Contains(string(*inputBytes),
+		"Please don't repeatedly request this endpoint before it unlocks!") {
+		return ErrFutureDay
+	}
+
+	err = os.WriteFile(fmt.Sprintf("./days/day%02d/input.txt", day), *inputBytes, 0777)
+
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
 
-func SubmitResponse(day, part, answer int) (bool, error) {
+func SubmitResponse(year, day, part, answer int) (bool, error) {
 
-	url := fmt.Sprintf("https://adventofcode.com/2024/day/%d/answer", day)
+	url := fmt.Sprintf("https://adventofcode.com/%d/day/%d/answer", year, day)
 
 	params := urls.Values{}
 	params.Add("level", strconv.Itoa(part))
@@ -66,10 +78,10 @@ func SubmitResponse(day, part, answer int) (bool, error) {
 	}
 
 	if strings.Contains(html, "You gave an answer too recently") {
-		return false, errors.New("you gave an answer too recently")
+		return false, ErrRetry
 	}
 
-	return false, errors.New("unexpected error")
+	return false, ErrUnexpected
 }
 
 func aocRequest(method, path string, body io.Reader) (*http.Request, error) {
