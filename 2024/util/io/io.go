@@ -14,7 +14,7 @@ func ReadInputFile(path string) *string {
 		panic(err)
 	}
 
-	input := string(content)
+	input := regexp.MustCompile(`[ ]+`).ReplaceAllString(strings.TrimSpace(string(content)), " ")
 
 	return &input
 }
