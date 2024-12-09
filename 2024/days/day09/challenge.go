@@ -12,7 +12,7 @@ func main() {
 	input := io.ReadInputFile("./input.txt")
 
 	var part int
-	flag.IntVar(&part, "part", 1, "part 1 or 2")
+	flag.IntVar(&part, "part", 2, "part 1 or 2")
 	flag.Parse()
 
 	var result int
@@ -28,8 +28,8 @@ func main() {
 }
 
 func part1(input *string) int {
-	// data := io.ToStringSlice(input, " ")
-	fileBlocks, freeBlocks, readerIndex := parseInput(input)
+
+	fileBlocks, _, freeBlocks, readerIndex := parseInput(input)
 
 mainLoop:
 	for len(freeBlocks) > 0 {
@@ -98,7 +98,20 @@ mainLoop:
 }
 
 func part2(input *string) int {
-	// data := io.ToStringSlice(input, " ")
+
+	_, fileBlocks, freeBlocks, _ := parseInput(input)
+
+	for i := len(fileBlocks) - 1; i >= 0; i-- {
+		for j := 0; j < len(freeBlocks) && freeBlocks[j].start < fileBlocks[i].start; j++ {
+
+			if freeBlocks[j].length >= fileBlocks[i].length {
+				fileBlocks[i].start = freeBlocks[j].start
+				freeBlocks[j].start += fileBlocks[i].length
+				freeBlocks[j].length -= fileBlocks[i].length
+				break
+			}
+		}
+	}
 
 	return 0
 }
@@ -113,8 +126,9 @@ type FileBlock struct {
 	Block
 }
 
-func parseInput(input *string) (map[int]FileBlock, []Block, int) {
-	fileBlocks := make(map[int]FileBlock)
+func parseInput(input *string) (map[int]FileBlock, []FileBlock, []Block, int) {
+	fileBlocksMap := make(map[int]FileBlock)
+	fileBlocks := make([]FileBlock, 0)
 	freeBlocks := make([]Block, 0)
 	id := 0
 	index := 0
@@ -135,13 +149,15 @@ func parseInput(input *string) (map[int]FileBlock, []Block, int) {
 				})
 			}
 		} else {
-			fileBlocks[index] = FileBlock{
+			fileBlock := FileBlock{
 				id: id,
 				Block: Block{
 					start:  index,
 					length: num,
 				},
 			}
+			fileBlocksMap[index] = fileBlock
+			fileBlocks = append(fileBlocks, fileBlock)
 			id++
 		}
 
@@ -150,7 +166,7 @@ func parseInput(input *string) (map[int]FileBlock, []Block, int) {
 			isEmpty = !isEmpty
 		}
 	}
-	return fileBlocks, freeBlocks, index
+	return fileBlocksMap, fileBlocks, freeBlocks, index
 }
 
 func getBlockAtIndex(blocks map[int]FileBlock, index int) (*FileBlock, int) {
