@@ -1,5 +1,9 @@
 package grids
 
+import (
+	"strings"
+)
+
 type Grid [][]string
 type Direction int
 type Coords struct {
@@ -41,4 +45,24 @@ func GetCharacter(grid *Grid, coords Coords) string {
 		return ""
 	}
 	return (*grid)[coords.X][coords.Y]
+}
+
+func ParseGrid(input *string) (map[Coords]string, [2]int) {
+
+	dataMap := make(map[Coords]string)
+	var bounds [2]int
+
+	rows := strings.Split(*input, "\n")
+	for i, row := range rows {
+		cols := strings.Split(strings.TrimSpace(row), "")
+
+		for j, str := range cols {
+			if i == 0 && j == 0 {
+				bounds = [2]int{len(rows), len(cols)}
+			}
+			dataMap[Coords{X: i, Y: j}] = str
+		}
+	}
+
+	return dataMap, bounds
 }
