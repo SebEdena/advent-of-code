@@ -47,6 +47,22 @@ func GetCharacter(grid *Grid, coords Coords) string {
 	return (*grid)[coords.X][coords.Y]
 }
 
+func Rotate(direction Direction, angle int) Direction {
+	if angle%90 != 0 {
+		panic("Angle must be a multiple of 90")
+	}
+
+	rotation := 2 * (angle / 90)
+
+	newDir := (int(direction) - rotation) % len(Directions)
+
+	if newDir < 0 {
+		return Direction(len(Directions) + newDir)
+	} else {
+		return Direction(newDir)
+	}
+}
+
 func ParseGrid(input *string) (map[Coords]string, [2]int) {
 
 	dataMap := make(map[Coords]string)

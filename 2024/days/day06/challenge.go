@@ -104,21 +104,6 @@ func parseInput(input *string) (Step, []Step, [2]int, ObstacleMap) {
 	return *start, path, bounds, obstacleMap
 }
 
-func rotate90(direction grids.Direction) grids.Direction {
-	switch direction {
-	case grids.North:
-		return grids.East
-	case grids.East:
-		return grids.South
-	case grids.South:
-		return grids.West
-	case grids.West:
-		return grids.North
-	default:
-		panic("Unsupported direction")
-	}
-}
-
 func forward(step Step, bounds [2]int, obstacles *ObstacleMap) *Step {
 	direction := step.direction
 	nextCoords := grids.ApplyDirection(
@@ -131,7 +116,7 @@ func forward(step Step, bounds [2]int, obstacles *ObstacleMap) *Step {
 
 	for (*obstacles)[nextCoords] {
 
-		direction = rotate90(direction)
+		direction = grids.Rotate(direction, 90)
 
 		nextCoords = grids.ApplyDirection(
 			grids.Coords{X: step.x, Y: step.y}, direction,
@@ -191,7 +176,7 @@ func testBlocker(start, step Step, bounds [2]int, obstacleMap *ObstacleMap) bool
 		}
 
 		if obstacleMapCopy[nextCoords] {
-			currentStep = Step{currentStep.x, currentStep.y, rotate90(currentStep.direction)}
+			currentStep = Step{currentStep.x, currentStep.y, grids.Rotate(currentStep.direction, 90)}
 		} else {
 			currentStep = Step{nextCoords.X, nextCoords.Y, currentStep.direction}
 		}
