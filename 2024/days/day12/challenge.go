@@ -27,9 +27,9 @@ func main() {
 }
 
 func part1(input *string) int {
-	grid, bounds := grids.ParseGrid(input)
+	grid := grids.ParseGrid(io.ToStringSlice(input, ""))
 
-	plantGroups := clusterPlants(&grid, bounds)
+	plantGroups := clusterPlants(&grid)
 
 	fenceCost := 0
 
@@ -43,9 +43,9 @@ func part1(input *string) int {
 }
 
 func part2(input *string) int {
-	grid, bounds := grids.ParseGrid(input)
+	grid := grids.ParseGrid(io.ToStringSlice(input, ""))
 
-	plantGroups := clusterPlants(&grid, bounds)
+	plantGroups := clusterPlants(&grid)
 
 	fenceCost := 0
 
@@ -64,15 +64,15 @@ type PlantGroup struct {
 	limits     [2]grids.Coords
 }
 
-func clusterPlants(grid *map[grids.Coords]string, bounds [2]int) []PlantGroup {
+func clusterPlants(grid *grids.Grid[string]) []PlantGroup {
 	plantGroups := make([]PlantGroup, 0)
 	visitedCells := make(map[grids.Coords]bool)
 
-	for i := 0; i < bounds[0]; i++ {
-		for j := 0; j < bounds[1]; j++ {
+	for i := 0; i < grid.Rows; i++ {
+		for j := 0; j < grid.Cols; j++ {
 			coord := grids.Coords{X: i, Y: j}
 			if !visitedCells[coord] {
-				plants, limits := getPlants(grid, bounds, coord)
+				plants, limits := getPlants(grid, coord)
 				plantGroups = append(plantGroups, PlantGroup{
 					plantMap: plants, firstPlant: coord, limits: limits})
 
@@ -86,8 +86,8 @@ func clusterPlants(grid *map[grids.Coords]string, bounds [2]int) []PlantGroup {
 	return plantGroups
 }
 
-func getPlants(grid *map[grids.Coords]string, bounds [2]int, start grids.Coords) (map[grids.Coords]bool, [2]grids.Coords) {
-	character := (*grid)[start]
+func getPlants(grid *grids.Grid[string], start grids.Coords) (map[grids.Coords]bool, [2]grids.Coords) {
+	character := grid.GetElement(start)
 	directions := [4]grids.Direction{grids.North, grids.East, grids.South, grids.West}
 
 	if character == "" {
@@ -119,8 +119,8 @@ func getPlants(grid *map[grids.Coords]string, bounds [2]int, start grids.Coords)
 
 		for _, direction := range directions {
 			coords := grids.ApplyDirection(cell, direction)
-			if grids.ValidCoordinates(coords, bounds[0], bounds[1]) &&
-				!visited[coords] && (*grid)[coords] == character {
+			if grid.ValidCoordinates(coords) &&
+				!visited[coords] && grid.GetElement(coords) == character {
 				toVisit = append(toVisit, coords)
 			}
 		}
