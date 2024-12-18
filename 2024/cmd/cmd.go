@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os/exec"
 	"strconv"
-	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -99,12 +98,12 @@ func runCommand() *cobra.Command {
 				panic(err)
 			}
 
-			answer, _ := strconv.Atoi(strings.ReplaceAll(string(result), "\n", ""))
+			answer := string(result)
 
-			fmt.Printf("Answer: %d\n", answer)
+			fmt.Printf("Answer: %s\n", answer)
 
 			if submit {
-				fmt.Printf("Sending answer %d to Advent of Code website...\n", answer)
+				fmt.Printf("Sending answer %s to Advent of Code website...\n", answer)
 
 				ok, err := aoc.SubmitResponse(year, day, part, answer)
 

@@ -45,13 +45,13 @@ func SaveInput(year, day int) error {
 	return nil
 }
 
-func SubmitResponse(year, day, part, answer int) (bool, error) {
+func SubmitResponse(year, day, part int, answer string) (bool, error) {
 
 	url := fmt.Sprintf("https://adventofcode.com/%d/day/%d/answer", year, day)
 
 	params := urls.Values{}
 	params.Add("level", strconv.Itoa(part))
-	params.Add("answer", strconv.Itoa(answer))
+	params.Add("answer", answer)
 
 	req, err := aocRequest("POST", url, bytes.NewBufferString(params.Encode()))
 
