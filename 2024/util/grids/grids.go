@@ -21,6 +21,10 @@ func (g *Grid[T]) GetElement(coords Coords) T {
 	return g.data[coords]
 }
 
+func (g *Grid[T]) SetElement(coords Coords, element T) {
+	g.data[coords] = element
+}
+
 func ParseGrid[T any](input *[][]T) Grid[T] {
 	dataMap := make(map[Coords]T)
 
