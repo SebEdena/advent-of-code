@@ -23,6 +23,7 @@ dependencies {
     // This dependency is used by the application.
     implementation(libs.guava)
     implementation(libs.kotlinx.coroutines.core)
+    implementation(kotlin("reflect"))
 }
 
 testing {
@@ -44,5 +45,9 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = "org.example.AppKt"
+    mainClass = "adventofcode.AppKt"
+}
+
+tasks.getByName("run", JavaExec::class) {
+    standardInput = System.`in`
 }
