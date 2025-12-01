@@ -26,7 +26,7 @@ fun main() {
     println("Which part do you want to run?")
     val part = readln().toInt()
 
-    val result = when (part) {
+    val result: Long = when (part) {
         1 -> dayInstance.part1()
         2 -> dayInstance.part2()
         else -> throw IllegalArgumentException("Invalid part: $part")

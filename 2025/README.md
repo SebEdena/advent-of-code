@@ -18,10 +18,11 @@ To ensure reproducible builds across different machines, this project relies on(
 
 ### 1\. Install SDKMAN\!
 
-If you haven't already, install SDKMAN\! in your terminal (WSL or macOS):bash
-curl -s "[https://get.sdkman.io](https://get.sdkman.io)" | bash
-source "$HOME/.sdkman/bin/sdkman-init.sh"
+If you haven't already, install SDKMAN\! in your terminal (WSL or macOS):
 
+```bash
+curl -s "https://get.sdkman.io" | bash
+source "$HOME/.sdkman/bin/sdkman-init.sh"
 ````
 
 ### 2. Provision the Toolchain
