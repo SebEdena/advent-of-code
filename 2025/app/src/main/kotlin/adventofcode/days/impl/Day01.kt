@@ -20,7 +20,7 @@ class Day01(input: Input) : AbstractDay(input) {
     private data class DialState(val position: Int, val cycles: Int)
 
     private fun parseInput(): List<Operation> {
-        return this.input.toTypedInput { op: String ->
+        return this.input.toTypedListInput({ op: String ->
             val opPattern = """^(?<direction>[LR])(?<value>\d+)$""".toRegex()
             val result = opPattern.find(op)!!
 
@@ -28,7 +28,7 @@ class Day01(input: Input) : AbstractDay(input) {
             val value = result.groups["value"]!!.value.toInt()
 
             Operation(direction, value)
-        }.flatten()
+        }).flatten()
     }
 
     override fun part1(): Long {
@@ -44,7 +44,7 @@ class Day01(input: Input) : AbstractDay(input) {
 
         val dialStates = this.processDial(DIAL_START_POSITION, DIAL_POSITIONS, data)
 
-        return dialStates.fold(0L)  { acc, dial  ->
+        return dialStates.fold(0L) { acc, dial ->
             acc + (dial.cycles + if (dial.position == 0) 1 else 0).toLong()
         }
     }
@@ -58,9 +58,10 @@ class Day01(input: Input) : AbstractDay(input) {
             var newPosition: Int
             when (operation.direction) {
                 Direction.L -> {
-                   newPosition = (currentPosition - (operation.value % positions))
-                   cycles = (operation.value) / positions
+                    newPosition = (currentPosition - (operation.value % positions))
+                    cycles = (operation.value) / positions
                 }
+
                 Direction.R -> {
                     newPosition = (currentPosition + (operation.value % positions))
                     cycles = (operation.value) / positions

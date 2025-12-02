@@ -7,6 +7,8 @@ class Input private constructor(
     private val content: String,
 ) {
     companion object {
+        private const val DEFAULT_COLUMN_SEPARATOR = " "
+
         fun fromFile(path: String): Input {
             // Try to load from file system first
             val file = File(path)
@@ -27,21 +29,26 @@ class Input private constructor(
         }
     }
 
-    fun <T> toTypedInput(converter: (item: String) -> T): List<List<T>> =
+    fun <T> toTypedListInput(
+        converter: (item: String) -> T,
+        columnSep: String = DEFAULT_COLUMN_SEPARATOR
+    ): List<List<T>> =
         this.content
             .trim()
             .replace(Regex(" +"), " ")
             .lines()
             .map { line ->
-                line.split(" ").map { item -> converter(item) }
+                line.split(columnSep).map { item -> converter(item) }
             }
 
-    fun toStringInput(): List<List<String>> = toTypedInput { item -> item }
+    fun toStringListInput(columnSep: String = DEFAULT_COLUMN_SEPARATOR): List<List<String>> =
+        toTypedListInput({ item -> item }, columnSep)
 
-    fun toIntInput(): List<List<Int>> = toTypedInput { item -> item.toInt() }
+    fun toIntListInput(columnSep: String = DEFAULT_COLUMN_SEPARATOR): List<List<Int>> =
+        toTypedListInput({ item -> item.toInt() }, columnSep)
 
     override fun toString(): String =
-        this.toStringInput().joinToString(separator = "\n") { line ->
+        this.toStringListInput().joinToString(separator = "\n") { line ->
             line.joinToString(separator = " ")
         }
 }
