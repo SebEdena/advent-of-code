@@ -1,4 +1,3 @@
-
 package adventofcode
 
 import adventofcode.days.AbstractDay
@@ -12,9 +11,13 @@ fun main() {
     println("Which day do you want to run?")
     val day = readln().toInt()
 
-    val dayClass : KClass<AbstractDay> = Class
-        .forName("adventofcode.days.impl.Day%02d".format(day))
-        .kotlin as KClass<AbstractDay>
+    val dayClass: KClass<out AbstractDay> = try {
+        Class
+            .forName("adventofcode.days.impl.Day%02d".format(day))
+            .kotlin as KClass<out AbstractDay>
+    } catch (_: ClassNotFoundException) {
+        throw IllegalStateException("Cannot run day $day : it does not exist")
+    }
 
     val dayInstance = dayClass.primaryConstructor?.let { constructor ->
         val input = Input.fromFile("input_day%02d.txt".format(day))
