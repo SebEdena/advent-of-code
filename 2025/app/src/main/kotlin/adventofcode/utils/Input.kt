@@ -38,7 +38,10 @@ class Input private constructor(
             .replace(Regex(" +"), " ")
             .lines()
             .map { line ->
-                line.split(columnSep).map { item -> converter(item) }
+                line
+                    .split(columnSep)
+                    .filter { str -> str.isNotEmpty() }
+                    .map { item -> converter(item) }
             }
 
     fun toStringListInput(columnSep: String = DEFAULT_COLUMN_SEPARATOR): List<List<String>> =
