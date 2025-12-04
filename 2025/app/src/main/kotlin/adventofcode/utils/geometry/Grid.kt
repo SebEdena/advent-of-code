@@ -1,22 +1,16 @@
 package adventofcode.utils.geometry
 
-import kotlin.math.max
 
-
-class Grid(private val coordMap: Map<Coords, String>, val xMax: Int, val yMax: Int) {
+class Grid(private val coordMap: Map<Coords, String>) {
     companion object {
         fun fromInput(data: List<List<String>>): Grid {
             val coordMap = mutableMapOf<Coords, String>()
-            var xMax = 0
-            var yMax = 0
             for (i in 0..<data.size) {
-                yMax = max(yMax, data.size)
                 for (j in 0..<data[i].size) {
-                    xMax = max(xMax, data[i].size)
                     coordMap[Coords(j, i)] = data[i][j]
                 }
             }
-            return Grid(coordMap.toMap(), xMax, yMax)
+            return Grid(coordMap.toMap())
         }
     }
 

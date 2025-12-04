@@ -8,6 +8,10 @@ import adventofcode.utils.geometry.Grid
 
 class Day04(input: Input) : AbstractDay(input) {
 
+    companion object {
+        const val FORKLIFT_ROLLS_LIMIT = 4
+    }
+
     private fun parseInput(): Grid {
         val data = this.input.toStringListInput("")
         return Grid.fromInput(data)
@@ -16,11 +20,9 @@ class Day04(input: Input) : AbstractDay(input) {
     override fun part1(): Long {
         val grid = this.parseInput()
 
-        val rollCoords = grid.getAllWithContent("@")
-            .filter { coord -> canAccessRoll(grid, coord) }
-            .size
-
-        return rollCoords.toLong()
+        return grid.getAllWithContent("@")
+            .filter { coord -> getCloseRolls(grid, coord).size < FORKLIFT_ROLLS_LIMIT }
+            .size.toLong()
     }
 
     override fun part2(): Long {
@@ -29,18 +31,26 @@ class Day04(input: Input) : AbstractDay(input) {
         val rollCoords = grid.getAllWithContent("@")
         val removedRolls = mutableSetOf<Coords>()
 
-        while (true) {
+        var rollsToCheck = rollCoords.toMutableSet()
+
+        while (rollsToCheck.isNotEmpty()) {
+            val newRollsToCheck = mutableSetOf<Coords>()
             val newRemovedRolls = mutableSetOf<Coords>()
-            for (coord in rollCoords.filter { it !in removedRolls }) {
-                if (canAccessRoll(grid, coord, removedRolls)) {
-                    removedRolls.add(coord)
-                    newRemovedRolls.add(coord)
+
+            rollsToCheck
+                .map { Pair(it, getCloseRolls(grid, it, removedRolls)) }
+                .filter { it.second.size < FORKLIFT_ROLLS_LIMIT }
+                .forEach {
+                    newRemovedRolls.add(it.first)
+                    newRollsToCheck.remove(it.first)
+                    newRollsToCheck.addAll(it.second)
                 }
-            }
-            if (newRemovedRolls.isEmpty()) {
-                return removedRolls.size.toLong()
-            }
+
+            rollsToCheck = newRollsToCheck
+            removedRolls.addAll(newRemovedRolls)
         }
+
+        return removedRolls.size.toLong()
     }
 
     private fun getCloseRolls(grid: Grid, coords: Coords, removedRolls: Set<Coords> = setOf()) =
@@ -52,7 +62,4 @@ class Day04(input: Input) : AbstractDay(input) {
                 item != null && item == "@"
             }
         }.toSet()
-
-    private fun canAccessRoll(grid: Grid, coords: Coords, removedRolls: Set<Coords> = setOf()) =
-        getCloseRolls(grid, coords, removedRolls).size < 4
 }
