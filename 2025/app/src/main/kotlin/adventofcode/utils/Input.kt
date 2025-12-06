@@ -29,6 +29,8 @@ class Input private constructor(
         }
     }
 
+    fun toRawStringList(): List<String> = this.content.trim().lines()
+
     fun <T> toTypedListInput(
         converter: (item: String) -> T,
         columnSep: String = DEFAULT_COLUMN_SEPARATOR
