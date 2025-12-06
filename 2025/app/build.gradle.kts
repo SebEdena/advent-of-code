@@ -51,3 +51,26 @@ application {
 tasks.getByName("run", JavaExec::class) {
     standardInput = System.`in`
 }
+
+// Task to generate boilerplate for a new day
+// Usage: ./gradlew newDay -Pday=5
+tasks.register<JavaExec>("newDay") {
+    group = "advent of code"
+    description = "Generate boilerplate code for a new day. Usage: ./gradlew newDay -Pday=<number>"
+
+    mainClass = "adventofcode.NewDayGeneratorKt"
+    classpath = sourceSets["main"].runtimeClasspath
+    standardInput = System.`in`
+
+    // Read property at configuration time (compatible with configuration cache)
+    val dayNumber = providers.gradleProperty("day")
+
+    argumentProviders.add {
+        if (dayNumber.isPresent) {
+            listOf(dayNumber.get())
+        } else {
+            throw GradleException("Please specify a day number with -Pday=<number>")
+        }
+    }
+}
+
