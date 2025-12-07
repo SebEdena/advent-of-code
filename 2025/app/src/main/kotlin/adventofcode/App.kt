@@ -4,6 +4,7 @@ import adventofcode.days.AbstractDay
 import adventofcode.utils.Input
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
+import kotlin.system.measureTimeMillis
 
 fun main() {
     println("Hello, Advent of Code!")
@@ -29,11 +30,17 @@ fun main() {
     println("Which part do you want to run?")
     val part = readln().toInt()
 
-    val result: Long = when (part) {
-        1 -> dayInstance.part1()
-        2 -> dayInstance.part2()
-        else -> throw IllegalArgumentException("Invalid part: $part")
+    var result: Long = 0
+    val elapsedMs = measureTimeMillis {
+        result = when (part) {
+            1 -> dayInstance.part1()
+            2 -> dayInstance.part2()
+            else -> throw IllegalArgumentException("Invalid part: $part")
+        }
     }
 
+    val elapsedSec = elapsedMs / 1000.0
+
     println("Result for Day $day Part $part: $result")
+    println("Execution time: %.3f s".format(elapsedSec))
 }

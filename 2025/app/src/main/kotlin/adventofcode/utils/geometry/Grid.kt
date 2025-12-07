@@ -2,6 +2,10 @@ package adventofcode.utils.geometry
 
 
 class Grid(private val coordMap: Map<Coords, String>) {
+
+    private val maxX: Int = coordMap.keys.maxOf { it.x }
+    private val maxY: Int = coordMap.keys.maxOf { it.y }
+
     companion object {
         fun fromInput(data: List<List<String>>): Grid {
             val coordMap = mutableMapOf<Coords, String>()
@@ -28,4 +32,20 @@ class Grid(private val coordMap: Map<Coords, String>) {
         coordMap.filter { it.value == str }.map { it.key }
             .toList()
             .sortedWith(compareBy({ it.y }, { it.x }))
+
+    fun bounds() = Coords(maxX, maxY)
+
+    override fun toString(): String {
+        val maxX = coordMap.keys.maxOf { it.x }
+        val maxY = coordMap.keys.maxOf { it.y }
+        val sb = StringBuilder()
+        for (y in 0..maxY) {
+            for (x in 0..maxX) {
+                val content = coordMap[Coords(x, y)] ?: " "
+                sb.append(content)
+            }
+            sb.append("\n")
+        }
+        return sb.toString()
+    }
 }
