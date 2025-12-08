@@ -60,7 +60,7 @@ This project uses the **Gradle Wrapper**, ensuring you don't need to install Gra
 ### Generate a new day
 
 ```bash
-./gradlew generateDay -Pday=<dayNumber>
+./gradlew newDay -Pday=<dayNumber>
 ```
 
 ## 📦 Dependency Management (Version Catalog)

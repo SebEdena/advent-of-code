@@ -6,11 +6,42 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 import kotlin.system.measureTimeMillis
 
+fun verifyIntIsInRange(input: String, range: IntRange): Int {
+    val dayNum: Int
+    try {
+        dayNum = input.toInt()
+    } catch (_: NumberFormatException) {
+        throw NumberFormatException("Day must be an integer")
+    }
+    if (dayNum in range) {
+        return dayNum
+    } else {
+        throw NumberFormatException(
+            "Day must be between an integer between " +
+                    "${range.first} and ${range.last}."
+        )
+    }
+}
+
+fun waitForIntInput(prompt: String, verify: (input: String) -> Int): Int {
+    while (true) {
+        println(prompt)
+        val input = readln()
+        try {
+            return verify(input)
+        } catch (e: NumberFormatException) {
+            println(e.message)
+        }
+    }
+}
+
 fun main() {
     println("Hello, Advent of Code!")
 
     println("Which day do you want to run?")
-    val day = readln().toInt()
+    val day = waitForIntInput("Enter day number (1-25):") {
+        verifyIntIsInRange(it, 1..25)
+    }
 
     val dayClass: KClass<out AbstractDay> = try {
         Class
@@ -26,9 +57,10 @@ fun main() {
         dayInstance
     } ?: throw IllegalStateException("Cannot run day $day : it does not exist")
 
-
     println("Which part do you want to run?")
-    val part = readln().toInt()
+    val part = waitForIntInput("Enter part (1-2):") {
+        verifyIntIsInRange(it, 1..2)
+    }
 
     var result: Long = 0
     val elapsedMs = measureTimeMillis {
