@@ -39,8 +39,8 @@ fun main() {
     println("Hello, Advent of Code!")
 
     println("Which day do you want to run?")
-    val day = waitForIntInput("Enter day number (1-25):") {
-        verifyIntIsInRange(it, 1..25)
+    val day = waitForIntInput("Enter day number (1-12):") {
+        verifyIntIsInRange(it, 1..12)
     }
 
     val dayClass: KClass<out AbstractDay> = try {
