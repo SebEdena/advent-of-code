@@ -12,3 +12,6 @@ build
 
 # Wrapper (Do NOT ignore the jar, it is needed for bootstrapping)
 !gradle/wrapper/gradle-wrapper.jar
+
+# Day 11 graphviz output
+*.svg

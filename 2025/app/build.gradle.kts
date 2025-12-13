@@ -22,7 +22,7 @@ repositories {
 dependencies {
     // This dependency is used by the application.
     implementation(libs.guava)
-    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.graphviz)
     implementation(kotlin("reflect"))
 }
 
